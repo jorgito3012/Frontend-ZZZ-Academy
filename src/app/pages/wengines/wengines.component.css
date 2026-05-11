@@ -1,0 +1,193 @@
+.wengines-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #fff;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #ffeb3b, #ff9800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-subtitle {
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+/* FILTERS */
+.filters-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
+}
+
+.filter-group h3 {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.buttons button {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.buttons button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.buttons button.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.buttons button.btn-s.active { background: #ffca28; color: #000; border-color: #ffca28; box-shadow: 0 0 15px rgba(255, 202, 40, 0.6); }
+.buttons button.btn-a.active { background: #ab47bc; color: #fff; border-color: #ab47bc; box-shadow: 0 0 15px rgba(171, 71, 188, 0.6); }
+.buttons button.btn-b.active { background: #29b6f6; color: #000; border-color: #29b6f6; box-shadow: 0 0 15px rgba(41, 182, 246, 0.6); }
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.rank-S { border-bottom: 4px solid #ffca28; }
+.rank-A { border-bottom: 4px solid #ab47bc; }
+.rank-B { border-bottom: 4px solid #29b6f6; }
+
+.card-image {
+  background: #111;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem;
+}
+
+.card-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0px 5px 15px rgba(0,0,0,0.8));
+}
+
+.badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 5px;
+}
+
+.badge-rarity, .badge-specialty {
+  background: rgba(0,0,0,0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.rank-S .badge-rarity { color: #ffca28; border-color: #ffca28; }
+.rank-A .badge-rarity { color: #ab47bc; border-color: #ab47bc; }
+.rank-B .badge-rarity { color: #29b6f6; border-color: #29b6f6; }
+
+.card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.03);
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.stat .label { color: #aaa; }
+.stat .value { font-weight: bold; color: #fff; }
+
+.description {
+  font-size: 0.85rem;
+  color: #bbb;
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+  font-size: 1.2rem;
+  grid-column: 1 / -1;
+}

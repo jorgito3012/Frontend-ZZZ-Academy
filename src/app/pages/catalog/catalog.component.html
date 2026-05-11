@@ -1,0 +1,32 @@
+<div class="catalog-container">
+  <div class="catalog-header">
+    <h1 class="text-center">CATÁLOGO DE AGENTES</h1>
+    <p class="text-center">Base de datos pública de Proxies Registrados en Nueva Eridu.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state text-center mt-4">
+    <h3 class="text-accent">CARGANDO DATOS DEL SERVIDOR...</h3>
+  </div>
+
+  <div class="grid-container" *ngIf="!isLoading">
+    <!-- Tarjeta Dinámica por cada personaje -->
+    <div class="agent-card glass-panel" *ngFor="let agent of agents">
+      <div class="card-image-wrapper">
+        <!-- Usaremos un placeholder si no hay imagen en tu BD, en el futuro puedes mapear agent.imagenUrl -->
+        <img [src]="agent.imagenUrl || 'https://placehold.co/300x400/1a1c23/c3ff00?text=' + agent.nombre" [alt]="agent.nombre" class="agent-image">
+        
+        <div class="rango-badge" [ngClass]="agent.rango">
+          {{ agent.rango }}
+        </div>
+      </div>
+      
+      <div class="card-content">
+        <h3 class="agent-name">{{ agent.nombre }}</h3>
+        <div class="agent-tags">
+          <span class="tag tag-elemento">{{ agent.elemento }}</span>
+          <span class="tag tag-estilo">{{ agent.rol }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

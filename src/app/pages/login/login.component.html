@@ -1,0 +1,30 @@
+<div class="auth-wrapper">
+  <div class="glass-panel auth-card">
+    <h2 class="text-center mb-4">INICIAR SESIÓN</h2>
+    
+    <div *ngIf="errorMessage" class="error-box">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" name="email" [(ngModel)]="credentials.email" required placeholder="proxy@zzz.com">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-control" name="password" [(ngModel)]="credentials.password" required placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="btn-primary btn-cyber w-100 mt-4" [disabled]="!loginForm.form.valid || isLoading">
+        <span *ngIf="!isLoading">ENTRAR AL SISTEMA</span>
+        <span *ngIf="isLoading">CONECTANDO...</span>
+      </button>
+    </form>
+
+    <div class="auth-footer mt-4 text-center">
+      <p>¿No tienes una cuenta proxy? <a routerLink="/register" class="text-accent">Regístrate aquí</a></p>
+    </div>
+  </div>
+</div>

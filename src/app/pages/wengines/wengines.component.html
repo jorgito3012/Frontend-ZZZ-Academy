@@ -1,0 +1,52 @@
+<div class="wengines-container">
+  <div class="header-section">
+    <h1 class="page-title">Amplificadores (W-Engines)</h1>
+    <p class="page-subtitle">El corazón mecánico de tus Agentes. Filtra y explora todo el arsenal disponible.</p>
+  </div>
+
+  <div class="filters-section">
+    <div class="filter-group">
+      <h3>Rareza</h3>
+      <div class="buttons">
+        <button [class.active]="selectedRarity === 'S'" (click)="setRarityFilter('S')" class="btn-s">S</button>
+        <button [class.active]="selectedRarity === 'A'" (click)="setRarityFilter('A')" class="btn-a">A</button>
+        <button [class.active]="selectedRarity === 'B'" (click)="setRarityFilter('B')" class="btn-b">B</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <h3>Especialidad</h3>
+      <div class="buttons">
+        <button [class.active]="selectedSpecialty === 'ATACANTE'" (click)="setSpecialtyFilter('ATACANTE')">Atacante</button>
+        <button [class.active]="selectedSpecialty === 'ATURDIDOR'" (click)="setSpecialtyFilter('ATURDIDOR')">Aturdidor</button>
+        <button [class.active]="selectedSpecialty === 'ANOMALO'" (click)="setSpecialtyFilter('ANOMALO')">Anómalo</button>
+        <button [class.active]="selectedSpecialty === 'APOYO'" (click)="setSpecialtyFilter('APOYO')">Apoyo</button>
+        <button [class.active]="selectedSpecialty === 'DEFENSIVO'" (click)="setSpecialtyFilter('DEFENSIVO')">Defensivo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div *ngFor="let w of filteredWEngines" class="card" [ngClass]="'rank-' + w.rareza">
+      <div class="card-image">
+        <img [src]="apiUrl + w.imagenUrl" [alt]="w.nombre" onerror="this.src='/assets/placeholder.png'; this.style.opacity='0.1'">
+        <div class="badges">
+          <div class="badge-rarity">{{ w.rareza }}</div>
+          <div class="badge-specialty">{{ w.especialidad }}</div>
+        </div>
+      </div>
+      <div class="card-content">
+        <h2>{{ w.nombre }}</h2>
+        <div class="stats">
+          <div class="stat"><span class="label">ATQ Base:</span> <span class="value">{{ w.ataqueBase || '?' }}</span></div>
+          <div class="stat"><span class="label">Secundaria:</span> <span class="value">{{ w.statPrincipal }}</span></div>
+        </div>
+        <p class="description">{{ w.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="filteredWEngines.length === 0">
+    <p>No se han encontrado Amplificadores con estos filtros.</p>
+  </div>
+</div>

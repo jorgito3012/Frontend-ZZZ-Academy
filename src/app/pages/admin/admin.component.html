@@ -1,0 +1,253 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1><span class="text-accent">🛡️</span> Panel de Control</h1>
+    <p>Añade nuevo contenido a la base de datos de ZZZ Academy</p>
+  </div>
+
+  <!-- NAVEGACIÓN DE PESTAÑAS -->
+  <div class="tabs-nav">
+    <button [class.active]="activeTab === 'agentes'" (click)="switchTab('agentes')">👤 Crear Agente</button>
+    <button [class.active]="activeTab === 'wengines'" (click)="switchTab('wengines')">⚙️ Crear W-Engine</button>
+    <button [class.active]="activeTab === 'bangboos'" (click)="switchTab('bangboos')">🤖 Crear Bangboo</button>
+    <button [class.active]="activeTab === 'discos'" (click)="switchTab('discos')">💿 Crear Disco</button>
+  </div>
+
+  <div class="admin-card">
+    <!-- MENSAJES -->
+    <div class="alert alert-success" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+    <div class="alert alert-error" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- FORMULARIO: AGENTES -->
+    <form (ngSubmit)="onSubmit()" #adminForm="ngForm" class="admin-form" *ngIf="activeTab === 'agentes'">
+      <h2>Añadir Nuevo Agente</h2>
+      
+      <div class="form-group">
+        <label>Nombre del Agente</label>
+        <input type="text" [(ngModel)]="newAgent.nombre" name="nombre" required placeholder="Ej: Ellen Joe">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rango</label>
+          <select [(ngModel)]="newAgent.rango" name="rango">
+            <option value="S">Grado S</option>
+            <option value="A">Grado A</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Atributo / Elemento</label>
+          <select [(ngModel)]="newAgent.elemento" name="elemento">
+            <option value="FUEGO">Fuego</option>
+            <option value="HIELO">Hielo</option>
+            <option value="ELECTRICO">Eléctrico</option>
+            <option value="FISICO">Físico</option>
+            <option value="ETER">Etéreo</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Especialidad / Rol</label>
+          <select [(ngModel)]="newAgent.rol" name="rol">
+            <option value="ATACANTE">Atacante</option>
+            <option value="ATURDIDOR">Aturdidor</option>
+            <option value="ANOMALO">Anómalo</option>
+            <option value="APOYO">Apoyo</option>
+            <option value="DEFENSIVO">Defensivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción corta</label>
+        <textarea [(ngModel)]="newAgent.descripcion" name="descripcion" rows="3" required></textarea>
+      </div>
+
+      <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
+
+      <button type="submit" class="btn-submit" [disabled]="!adminForm.form.valid || isUploading || isSaving">
+        <span *ngIf="!isUploading && !isSaving">Guardar Agente</span>
+        <span *ngIf="isUploading">Subiendo imagen...</span>
+        <span *ngIf="isSaving">Guardando en BD...</span>
+      </button>
+    </form>
+
+    <!-- FORMULARIO: W-ENGINES -->
+    <form (ngSubmit)="onSubmit()" #wengineForm="ngForm" class="admin-form" *ngIf="activeTab === 'wengines'">
+      <h2>Añadir Nuevo W-Engine</h2>
+      
+      <div class="form-group">
+        <label>Nombre del W-Engine</label>
+        <input type="text" [(ngModel)]="newWEngine.nombre" name="nombreW" required placeholder="Ej: Visitante de las profundidades">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rareza</label>
+          <select [(ngModel)]="newWEngine.rareza" name="rarezaW">
+            <option value="S">Rango S</option>
+            <option value="A">Rango A</option>
+            <option value="B">Rango B</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Especialidad</label>
+          <select [(ngModel)]="newWEngine.especialidad" name="especialidadW">
+            <option value="ATACANTE">Atacante</option>
+            <option value="ATURDIDOR">Aturdidor</option>
+            <option value="ANOMALO">Anómalo</option>
+            <option value="APOYO">Apoyo</option>
+            <option value="DEFENSIVO">Defensivo</option>
+            <option value="DISRUPTIVO">Disruptivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estadística Principal (Ej: Probabilidad de Crítico: 24%)</label>
+          <input type="text" [(ngModel)]="newWEngine.statPrincipal" name="statW" required>
+        </div>
+        <div class="form-group">
+          <label>Ataque Base (Ej: 713)</label>
+          <input type="number" [(ngModel)]="newWEngine.ataqueBase" name="ataqueW" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Efecto / Descripción</label>
+        <textarea [(ngModel)]="newWEngine.descripcion" name="descW" rows="4" required></textarea>
+      </div>
+
+      <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
+
+      <button type="submit" class="btn-submit" [disabled]="!wengineForm.form.valid || isUploading || isSaving">
+        <span *ngIf="!isUploading && !isSaving">Guardar W-Engine</span>
+        <span *ngIf="isUploading">Subiendo imagen...</span>
+        <span *ngIf="isSaving">Guardando en BD...</span>
+      </button>
+    </form>
+
+    <!-- FORMULARIO: DISCOS -->
+    <form (ngSubmit)="onSubmit()" #discoForm="ngForm" class="admin-form" *ngIf="activeTab === 'discos'">
+      <h2>Añadir Nuevo Set de Discos</h2>
+      
+      <div class="form-group">
+        <label>Nombre del Set</label>
+        <input type="text" [(ngModel)]="newDisco.nombre" name="nombreD" required placeholder="Ej: Pájaro Carpintero">
+      </div>
+
+      <div class="form-group">
+        <label>Efecto de 2 Piezas</label>
+        <input type="text" [(ngModel)]="newDisco.efecto2pc" name="efecto2D" required placeholder="Ej: Prob. CRIT +8%">
+      </div>
+
+      <div class="form-group">
+        <label>Efecto de 4 Piezas</label>
+        <textarea [(ngModel)]="newDisco.efecto4pc" name="efecto4D" rows="4" required placeholder="Describe el efecto especial..."></textarea>
+      </div>
+
+      <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
+
+      <button type="submit" class="btn-submit" [disabled]="!discoForm.form.valid || isUploading || isSaving">
+        <span *ngIf="!isUploading && !isSaving">Guardar Disco</span>
+        <span *ngIf="isUploading">Subiendo imagen...</span>
+        <span *ngIf="isSaving">Guardando en BD...</span>
+      </button>
+    </form>
+
+    <!-- FORMULARIO: BANGBOOS -->
+    <form (ngSubmit)="onSubmit()" #bangbooForm="ngForm" class="admin-form" *ngIf="activeTab === 'bangboos'">
+      <h2>Añadir Nuevo Bangboo</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre del Bangboo</label>
+          <input type="text" [(ngModel)]="newBangboo.nombre" name="nombreB" required placeholder="Ej: Mayordomo">
+        </div>
+        <div class="form-group">
+          <label>Rango</label>
+          <select [(ngModel)]="newBangboo.rango" name="rangoB">
+            <option value="S">Rango S</option>
+            <option value="A">Rango A</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- HABILIDADES JSONB -->
+      <div class="skills-form-section">
+        <h3 style="color: #ffea00; border-bottom: 1px solid rgba(255,234,0,0.3); padding-bottom: 0.5rem; margin-top: 1rem; margin-bottom: 1rem;">Habilidades del Bangboo</h3>
+        
+        <!-- Activa -->
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label>Técnica Activa: Nombre</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.activa.nombre" name="activaNombre" required placeholder="Nombre habilidad...">
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Técnica Activa: Descripción</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.activa.descripcion" name="activaDesc" required placeholder="Efecto de la habilidad...">
+          </div>
+        </div>
+
+        <!-- Adicional -->
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label>Técnica Adicional: Nombre</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.adicional.nombre" name="adicNombre" required placeholder="Nombre habilidad...">
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Técnica Adicional: Descripción</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.adicional.descripcion" name="adicDesc" required placeholder="Efecto pasivo extra...">
+          </div>
+        </div>
+
+        <!-- Cadena -->
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label>Técnica en Cadena: Nombre</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.cadena.nombre" name="cadenaNombre" required placeholder="Nombre habilidad...">
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Técnica en Cadena: Descripción</label>
+            <input type="text" [(ngModel)]="newBangboo.habilidades.cadena.descripcion" name="cadenaDesc" required placeholder="Efecto al encadenar...">
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
+
+      <button type="submit" class="btn-submit" [disabled]="!bangbooForm.form.valid || isUploading || isSaving">
+        <span *ngIf="!isUploading && !isSaving">Guardar Bangboo</span>
+        <span *ngIf="isUploading">Subiendo imagen...</span>
+        <span *ngIf="isSaving">Guardando en BD...</span>
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<!-- Template reutilizable para la subida de imagen -->
+<ng-template #imageUploadTemplate>
+  <div class="form-group file-upload-group">
+    <label>Imagen Oficial (Avatar/Icono)</label>
+    <div class="upload-area" [class.has-image]="imagePreview">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+      
+      <div class="upload-placeholder" *ngIf="!imagePreview">
+        <span class="icon">📁</span>
+        <span>Haz clic para subir un archivo</span>
+      </div>
+
+      <div class="image-preview" *ngIf="imagePreview">
+        <img [src]="imagePreview" alt="Previsualización">
+        <p class="file-name">{{ selectedFile?.name }}</p>
+      </div>
+    </div>
+  </div>
+</ng-template>

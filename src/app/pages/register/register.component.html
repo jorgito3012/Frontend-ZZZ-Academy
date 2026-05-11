@@ -1,0 +1,35 @@
+<div class="auth-wrapper">
+  <div class="glass-panel auth-card">
+    <h2 class="text-center mb-4">ALTA DE PROXY</h2>
+    
+    <div *ngIf="errorMessage" class="error-box">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Mensaje de éxito verde -->
+    <div *ngIf="successMessage" class="error-box" style="background-color: rgba(195, 255, 0, 0.1); border-left-color: var(--accent-primary); color: var(--accent-primary);">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" *ngIf="!successMessage">
+      <div class="form-group">
+        <label class="form-label">Email de Operador</label>
+        <input type="email" class="form-control" name="email" [(ngModel)]="userData.email" required placeholder="nuevo@zzz.com">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Contraseña Cifrada</label>
+        <input type="password" class="form-control" name="password" [(ngModel)]="userData.password" required minlength="4" placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="btn-primary btn-cyber w-100 mt-4" [disabled]="!registerForm.form.valid || isLoading">
+        <span *ngIf="!isLoading">CREAR CREDENCIAL</span>
+        <span *ngIf="isLoading">REGISTRANDO...</span>
+      </button>
+    </form>
+
+    <div class="auth-footer mt-4 text-center">
+      <p>¿Ya estás registrado? <a routerLink="/login" class="text-accent">Inicia Sesión</a></p>
+    </div>
+  </div>
+</div>

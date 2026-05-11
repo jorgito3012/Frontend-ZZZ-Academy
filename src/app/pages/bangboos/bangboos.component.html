@@ -1,0 +1,70 @@
+<div class="catalog-container">
+  <div class="catalog-header">
+    <h1>Catálogo de <span class="text-accent">Bangboos</span></h1>
+    <p>Conoce a los asistentes inteligentes más útiles (y cuquis) de Nueva Eridu.</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters-panel">
+    <div class="filter-group">
+      <span class="filter-label">Filtrar por Rareza:</span>
+      <div class="filter-buttons">
+        <button [class.active]="selectedRango === 'TODOS'" (click)="filterByRango('TODOS')">Todos</button>
+        <button [class.active]="selectedRango === 'S'" (click)="filterByRango('S')">Rango S</button>
+        <button [class.active]="selectedRango === 'A'" (click)="filterByRango('A')">Rango A</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRILLA DE BANGBOOS -->
+  <div class="grid-container">
+    <div class="card" *ngFor="let bangboo of filteredBangboos">
+      
+      <!-- Imagen Superior -->
+      <div class="card-image-wrapper">
+        <img [src]="'http://localhost:8080' + bangboo.imagenUrl" [alt]="bangboo.nombre" class="card-image"
+             onerror="this.src='/assets/placeholder.webp'">
+        <span class="badge badge-rank" [ngClass]="'rank-' + bangboo.rango">
+          Rango {{ bangboo.rango }}
+        </span>
+      </div>
+
+      <!-- Cuerpo Inferior -->
+      <div class="card-content">
+        <h2 class="card-title">{{ bangboo.nombre }}</h2>
+
+        <!-- Sistema Visual de Habilidades JSONB -->
+        <div class="skills-container" *ngIf="bangboo.habilidades">
+          
+          <div class="skill-block">
+            <h4 class="skill-type text-accent">Técnica Activa</h4>
+            <span class="skill-name">{{ bangboo.habilidades.activa?.nombre }}</span>
+            <p class="skill-desc">{{ bangboo.habilidades.activa?.descripcion }}</p>
+          </div>
+
+          <div class="skill-separator"></div>
+
+          <div class="skill-block">
+            <h4 class="skill-type text-accent">Técnica Adicional</h4>
+            <span class="skill-name">{{ bangboo.habilidades.adicional?.nombre }}</span>
+            <p class="skill-desc">{{ bangboo.habilidades.adicional?.descripcion }}</p>
+          </div>
+
+          <div class="skill-separator"></div>
+
+          <div class="skill-block">
+            <h4 class="skill-type text-accent">Técnica en Cadena</h4>
+            <span class="skill-name">{{ bangboo.habilidades.cadena?.nombre }}</span>
+            <p class="skill-desc">{{ bangboo.habilidades.cadena?.descripcion }}</p>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de no hay resultados -->
+  <div class="no-results" *ngIf="filteredBangboos.length === 0">
+    <p>No se han encontrado Bangboos con estos filtros.</p>
+  </div>
+</div>

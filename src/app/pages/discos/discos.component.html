@@ -1,0 +1,27 @@
+<div class="discos-container">
+  <div class="header-section">
+    <h1 class="page-title">Sets de Discos</h1>
+    <p class="page-subtitle">El equipo táctico para potenciar las estadísticas base y añadir efectos únicos a tus Agentes.</p>
+  </div>
+
+  <div class="grid">
+    <div *ngFor="let disco of discos" class="card">
+      <div class="card-image">
+        <img [src]="apiUrl + disco.imagenUrl" [alt]="disco.nombre" onerror="this.src='/assets/placeholder.png'; this.style.opacity='0.1'">
+      </div>
+      <div class="card-content">
+        <h2>{{ disco.nombre }}</h2>
+        <div class="effects">
+          <div class="effect-box">
+            <span class="badge">2 Piezas</span>
+            <p>{{ disco.efecto2pc }}</p>
+          </div>
+          <div class="effect-box">
+            <span class="badge">4 Piezas</span>
+            <p>{{ disco.efecto4pc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
