@@ -1,0 +1,82 @@
+<div class="tier-list-container">
+  <div class="header-section animate-fade-in">
+    <h1 class="page-title">Tier List de Agentes</h1>
+    <p class="subtitle">Clasificación de personajes por rol y rendimiento en combate</p>
+  </div>
+
+  <div class="tier-columns-grid" *ngIf="!isLoading">
+    
+    <!-- COLUMNA 1: ATACANTES / DISRUPTIVOS -->
+    <div class="tier-column glass-panel">
+      <div class="column-header">
+        <i class="icon-sword"></i>
+        <h2>Daño Principal</h2>
+        <span>Atacantes y Disruptivos</span>
+      </div>
+      
+      <div class="tier-rows">
+        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
+          <div class="tier-label">{{t}}</div>
+          <div class="tier-content">
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(atacantes, t)" [routerLink]="['/agent', agent.id]">
+              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
+              <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA 2: ANÓMALOS -->
+    <div class="tier-column glass-panel">
+      <div class="column-header">
+        <i class="icon-anomaly"></i>
+        <h2>Anomalía</h2>
+        <span>Especialistas en Atributos</span>
+      </div>
+
+      <div class="tier-rows">
+        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
+          <div class="tier-label">{{t}}</div>
+          <div class="tier-content">
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(anomalos, t)" [routerLink]="['/agent', agent.id]">
+              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
+              <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA 3: UTILIDAD -->
+    <div class="tier-column glass-panel">
+      <div class="column-header">
+        <i class="icon-shield"></i>
+        <h2>Utilidad</h2>
+        <span>Aturdidores, Apoyo y Defensa</span>
+      </div>
+
+      <div class="tier-rows">
+        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
+          <div class="tier-label">{{t}}</div>
+          <div class="tier-content">
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(utilidad, t)" [routerLink]="['/agent', agent.id]">
+              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
+              <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Analizando datos de combate...</p>
+  </div>
+</div>

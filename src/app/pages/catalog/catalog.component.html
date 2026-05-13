@@ -4,16 +4,41 @@
     <p class="text-center">Base de datos pública de Proxies Registrados en Nueva Eridu.</p>
   </div>
 
+  <!-- Barra de Filtros -->
+  <div class="filters-container glass-panel" *ngIf="!isLoading">
+    <div class="filter-group search-group">
+      <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()">
+    </div>
+    <div class="filter-group">
+      <select [(ngModel)]="selectedElement" (ngModelChange)="applyFilters()">
+        <option value="">Todos los Elementos</option>
+        <option *ngFor="let el of elementos" [value]="el">{{ el }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <select [(ngModel)]="selectedRole" (ngModelChange)="applyFilters()">
+        <option value="">Todos los Roles</option>
+        <option *ngFor="let rol of roles" [value]="rol">{{ rol }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <select [(ngModel)]="selectedRango" (ngModelChange)="applyFilters()">
+        <option value="">Todos los Rangos</option>
+        <option *ngFor="let rango of rangos" [value]="rango">{{ rango }}</option>
+      </select>
+    </div>
+  </div>
+
   <div *ngIf="isLoading" class="loading-state text-center mt-4">
     <h3 class="text-accent">CARGANDO DATOS DEL SERVIDOR...</h3>
   </div>
 
   <div class="grid-container" *ngIf="!isLoading">
     <!-- Tarjeta Dinámica por cada personaje -->
-    <div class="agent-card glass-panel" *ngFor="let agent of agents">
+    <div class="agent-card glass-panel" *ngFor="let agent of filteredAgents" [routerLink]="['/agent', agent.id]" style="cursor: pointer;">
       <div class="card-image-wrapper">
         <!-- Usaremos un placeholder si no hay imagen en tu BD, en el futuro puedes mapear agent.imagenUrl -->
-        <img [src]="agent.imagenUrl || 'https://placehold.co/300x400/1a1c23/c3ff00?text=' + agent.nombre" [alt]="agent.nombre" class="agent-image">
+        <img [src]="agent.imagenUrl ? apiService.getImageUrl(agent.imagenUrl) : 'https://placehold.co/300x400/1a1c23/c3ff00?text=' + agent.nombre" [alt]="agent.nombre" class="agent-image">
         
         <div class="rango-badge" [ngClass]="agent.rango">
           {{ agent.rango }}

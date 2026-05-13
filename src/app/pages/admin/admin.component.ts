@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-admin',
@@ -12,18 +13,33 @@ import { AdminService } from '../../services/admin.service';
 })
 export class AdminComponent {
   private adminService = inject(AdminService);
+  private apiService = inject(ApiService);
   
-  // Gestión de pestañas (Tabs)
+  // Listas para selectores
+  agents: any[] = [];
+  wEngines: any[] = [];
+  discoSets: any[] = [];
+  
+  selectedAgentId: number | string = '';
   activeTab: 'agentes' | 'wengines' | 'discos' | 'bangboos' = 'agentes';
 
-  // --- MODELOS DE DATOS ---
-  newAgent = {
+  skillOrder = ['ataque_basico', 'evasion', 'asistencia', 'tecnica_especial', 'tecnica_cadena', 'habilidad_core'];
+
+  // --- MODELO DE AGENTE COMPLETO ---
+  newAgent: any = {
     nombre: '',
     rango: 'S',
     elemento: 'FUEGO',
     rol: 'ATACANTE',
+    tier: 'S',
     descripcion: '',
-    imagenUrl: ''
+    imagenUrl: '',
+    estadisticasLvl60: this.getEmptyStats(),
+    habilidades: this.getEmptySkills(),
+    mindscapes: this.getEmptyMindscapes(),
+    wengineRecomendado: null,
+    discoRecomendado4pc: null,
+    discoRecomendado2pc: null
   };
 
   newWEngine = {
@@ -62,6 +78,111 @@ export class AdminComponent {
   isSaving = false;
   successMessage = '';
   errorMessage = '';
+
+  ngOnInit() {
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
+    this.apiService.getAgents().subscribe(data => this.agents = data);
+    this.apiService.getWEngines().subscribe(data => this.wEngines = data);
+    this.apiService.getDiscoSets().subscribe(data => this.discoSets = data);
+  }
+
+  // --- LÓGICA DE FORMULARIO DE AGENTES ---
+  
+  onAgentSelected() {
+    if (this.selectedAgentId === '') {
+      this.resetAgentForm();
+      return;
+    }
+    const agent = this.agents.find(a => a.id == this.selectedAgentId);
+    if (agent) {
+      // Clonamos para evitar modificar la lista original directamente
+      this.newAgent = JSON.parse(JSON.stringify(agent));
+      
+      // Mapeamos objetos de relación a IDs para los selectores
+      if (this.newAgent.wengineRecomendado) this.newAgent.wengineRecomendado = this.newAgent.wengineRecomendado.id;
+      if (this.newAgent.discoRecomendado4pc) this.newAgent.discoRecomendado4pc = this.newAgent.discoRecomendado4pc.id;
+      if (this.newAgent.discoRecomendado2pc) this.newAgent.discoRecomendado2pc = this.newAgent.discoRecomendado2pc.id;
+
+      // Aseguramos que las estructuras existan
+      if (!this.newAgent.estadisticasLvl60) this.newAgent.estadisticasLvl60 = this.getEmptyStats();
+      if (!this.newAgent.habilidades) this.newAgent.habilidades = this.getEmptySkills();
+      if (!this.newAgent.mindscapes) this.newAgent.mindscapes = this.getEmptyMindscapes();
+    }
+  }
+
+  resetAgentForm() {
+    this.selectedAgentId = '';
+    this.newAgent = {
+      nombre: '',
+      rango: 'S',
+      elemento: 'FUEGO',
+      rol: 'ATACANTE',
+      tier: 'S',
+      descripcion: '',
+      imagenUrl: '',
+      estadisticasLvl60: this.getEmptyStats(),
+      habilidades: this.getEmptySkills(),
+      mindscapes: this.getEmptyMindscapes(),
+      wengineRecomendado: null,
+      discoRecomendado4pc: null,
+      discoRecomendado2pc: null
+    };
+    this.imagePreview = null;
+    this.selectedFile = null;
+  }
+
+  getEmptyStats() {
+    return {
+      'PV': null, 'Ataque': null, 'Defensa': null, 'Impacto': null,
+      'Probabilidad de Crítico': 5, 'Daño Crítico': 50,
+      'Tasa de Anomalía': null, 'Maestría de Anomalía': null,
+      'Tasa de Perforación': null, 'Recuperación de Energía': 1.2
+    };
+  }
+
+  getEmptySkills() {
+    return {
+      ataque_basico: [{ nombre: '', descripcion: '' }],
+      evasion: [{ nombre: '', descripcion: '' }],
+      asistencia: [{ nombre: '', descripcion: '' }],
+      tecnica_especial: [{ nombre: '', descripcion: '' }],
+      tecnica_cadena: [{ nombre: '', descripcion: '' }],
+      habilidad_core: [{ nombre: '', descripcion: '' }]
+    };
+  }
+
+  getEmptyMindscapes() {
+    return { '1': '', '2': '', '3': '', '4': '', '5': '', '6': '' };
+  }
+
+  addSubSkill(category: string) {
+    this.newAgent.habilidades[category].push({ nombre: '', descripcion: '' });
+  }
+
+  removeSubSkill(category: string, index: number) {
+    if (this.newAgent.habilidades[category].length > 1) {
+      this.newAgent.habilidades[category].splice(index, 1);
+    }
+  }
+
+  objectKeys(obj: any) {
+    return obj ? Object.keys(obj) : [];
+  }
+
+  formatSkillLabel(key: string): string {
+    const labels: { [key: string]: string } = {
+      'ataque_basico': 'Ataque Básico',
+      'evasion': 'Evasión',
+      'asistencia': 'Asistencia',
+      'tecnica_especial': 'Técnica Especial',
+      'tecnica_cadena': 'Cadena',
+      'habilidad_core': 'Core'
+    };
+    return labels[key] || key.replace(/_/g, ' ');
+  }
 
   // Cambiar de Pestaña
   switchTab(tab: 'agentes' | 'wengines' | 'discos' | 'bangboos') {
@@ -123,12 +244,29 @@ export class AdminComponent {
 
   saveAgent() {
     this.isSaving = true;
-    this.adminService.createAgent(this.newAgent).subscribe({
+    
+    // Si wengineRecomendado es un ID, lo convertimos a objeto para JPA
+    const agentToSave = JSON.parse(JSON.stringify(this.newAgent));
+    if (agentToSave.wengineRecomendado && typeof agentToSave.wengineRecomendado === 'number') {
+      agentToSave.wengineRecomendado = { id: agentToSave.wengineRecomendado };
+    }
+    if (agentToSave.discoRecomendado4pc && typeof agentToSave.discoRecomendado4pc === 'number') {
+      agentToSave.discoRecomendado4pc = { id: agentToSave.discoRecomendado4pc };
+    }
+    if (agentToSave.discoRecomendado2pc && typeof agentToSave.discoRecomendado2pc === 'number') {
+      agentToSave.discoRecomendado2pc = { id: agentToSave.discoRecomendado2pc };
+    }
+
+    const request = agentToSave.id 
+      ? this.adminService.updateAgent(agentToSave.id, agentToSave)
+      : this.adminService.createAgent(agentToSave);
+
+    request.subscribe({
       next: (res) => {
         this.isSaving = false;
-        this.showSuccess('¡Agente creado exitosamente!');
-        this.newAgent.nombre = '';
-        this.newAgent.descripcion = '';
+        this.showSuccess(agentToSave.id ? '¡Agente actualizado!' : '¡Agente creado!');
+        this.loadInitialData(); // Recargar lista
+        if (!agentToSave.id) this.resetAgentForm();
       },
       error: (err) => this.showError()
     });

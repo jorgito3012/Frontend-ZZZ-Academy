@@ -21,6 +21,9 @@
 }
 
 .agent-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
   transition: var(--transition-smooth);
   cursor: pointer;
@@ -37,12 +40,25 @@
   height: 380px;
   width: 100%;
   overflow: hidden;
+  background: var(--bg-surface); /* Fondo base consistente */
+}
+
+.card-image-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to top, rgba(26, 28, 35, 1) 0%, transparent 100%);
+  z-index: 1;
 }
 
 .agent-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top; /* Asegura que se vea la cabeza/torso */
   transition: transform 0.5s ease;
 }
 
@@ -72,13 +88,22 @@
 .rango-badge.A { color: #c3ff00; border-color: #c3ff00; }
 
 .card-content {
+  flex: 1; /* Hace que el contenido ocupe todo el espacio sobrante */
   padding: 1.5rem;
-  background: linear-gradient(to top, var(--bg-surface-elevated), transparent);
+  background-color: rgba(26, 28, 35, 1);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .agent-name {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
+  min-height: 3.6rem; /* Espacio para exactamente 2 líneas */
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.2;
 }
 
 .agent-tags {
@@ -104,3 +129,52 @@
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-light);
 }
+/* CSS añadido a catalog.component.css */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 15px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 32, 40, 0.6);
+  border-radius: 8px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-group {
+  flex-grow: 1;
+  min-width: 250px;
+}
+
+.filters-container input, .filters-container select {
+  padding: 10px 15px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--accent-primary);
+  color: var(--text-primary);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.filters-container input:focus, .filters-container select:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(195, 255, 0, 0.3);
+}
+
+.filters-container select option {
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+
+.agent-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(195, 255, 0, 0.2);
+}
+

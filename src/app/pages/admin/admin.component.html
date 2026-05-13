@@ -23,54 +23,145 @@
 
     <!-- FORMULARIO: AGENTES -->
     <form (ngSubmit)="onSubmit()" #adminForm="ngForm" class="admin-form" *ngIf="activeTab === 'agentes'">
-      <h2>Añadir Nuevo Agente</h2>
+      <div class="form-header-admin">
+        <h2>Gestión de Agentes</h2>
+        <div class="agent-selector-row">
+          <select [(ngModel)]="selectedAgentId" name="selectedAgent" (change)="onAgentSelected()" class="select-agent">
+            <option value="">-- Nuevo Agente --</option>
+            <option *ngFor="let agent of agents" [value]="agent.id">{{ agent.nombre }}</option>
+          </select>
+          <button type="button" class="btn-reset" (click)="resetAgentForm()">➕ Nuevo</button>
+        </div>
+      </div>
       
-      <div class="form-group">
-        <label>Nombre del Agente</label>
-        <input type="text" [(ngModel)]="newAgent.nombre" name="nombre" required placeholder="Ej: Ellen Joe">
+      <!-- SECCIÓN 1: DATOS BÁSICOS -->
+      <div class="form-section-admin glass-panel">
+        <h3 class="section-title">Datos Básicos</h3>
+        <div class="form-group">
+          <label>Nombre del Agente</label>
+          <input type="text" [(ngModel)]="newAgent.nombre" name="nombre" required placeholder="Ej: Ellen Joe">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Rango</label>
+            <select [(ngModel)]="newAgent.rango" name="rango">
+              <option value="S">Grado S</option>
+              <option value="A">Grado A</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Atributo / Elemento</label>
+            <select [(ngModel)]="newAgent.elemento" name="elemento">
+              <option value="FUEGO">Fuego</option>
+              <option value="HIELO">Hielo</option>
+              <option value="ELECTRICO">Eléctrico</option>
+              <option value="FISICO">Físico</option>
+              <option value="ETER">Etéreo</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Especialidad / Rol</label>
+            <select [(ngModel)]="newAgent.rol" name="rol">
+              <option value="ATACANTE">Atacante</option>
+              <option value="ATURDIDOR">Aturdidor</option>
+              <option value="ANOMALO">Anómalo</option>
+              <option value="APOYO">Apoyo</option>
+              <option value="DEFENSIVO">Defensivo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tier List (Rango)</label>
+            <select [(ngModel)]="newAgent.tier" name="tier">
+              <option value="SS">Tier SS</option>
+              <option value="S">Tier S</option>
+              <option value="A">Tier A</option>
+              <option value="B">Tier B</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción corta</label>
+          <textarea [(ngModel)]="newAgent.descripcion" name="descripcion" rows="3" required></textarea>
+        </div>
+
+        <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Rango</label>
-          <select [(ngModel)]="newAgent.rango" name="rango">
-            <option value="S">Grado S</option>
-            <option value="A">Grado A</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label>Atributo / Elemento</label>
-          <select [(ngModel)]="newAgent.elemento" name="elemento">
-            <option value="FUEGO">Fuego</option>
-            <option value="HIELO">Hielo</option>
-            <option value="ELECTRICO">Eléctrico</option>
-            <option value="FISICO">Físico</option>
-            <option value="ETER">Etéreo</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label>Especialidad / Rol</label>
-          <select [(ngModel)]="newAgent.rol" name="rol">
-            <option value="ATACANTE">Atacante</option>
-            <option value="ATURDIDOR">Aturdidor</option>
-            <option value="ANOMALO">Anómalo</option>
-            <option value="APOYO">Apoyo</option>
-            <option value="DEFENSIVO">Defensivo</option>
-          </select>
+      <!-- SECCIÓN 2: ESTADÍSTICAS -->
+      <div class="form-section-admin glass-panel">
+        <h3 class="section-title">Estadísticas Base (Lvl 60)</h3>
+        <div class="stats-form-grid">
+          <div class="form-group" *ngFor="let stat of objectKeys(newAgent.estadisticasLvl60)">
+            <label>{{ stat }}</label>
+            <input type="number" [(ngModel)]="newAgent.estadisticasLvl60[stat]" [name]="'stat_' + stat" step="0.1" placeholder="0">
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Descripción corta</label>
-        <textarea [(ngModel)]="newAgent.descripcion" name="descripcion" rows="3" required></textarea>
+      <!-- SECCIÓN 3: BUILD RECOMENDADA -->
+      <div class="form-section-admin glass-panel">
+        <h3 class="section-title">Build Recomendada</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>W-Engine Recomendado</label>
+            <select [(ngModel)]="newAgent.wengineRecomendado" name="wengine">
+              <option [ngValue]="null">-- Ninguno --</option>
+              <option *ngFor="let w of wEngines" [ngValue]="w.id">{{ w.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Set 4 piezas</label>
+            <select [(ngModel)]="newAgent.discoRecomendado4pc" name="disco4">
+              <option [ngValue]="null">-- Ninguno --</option>
+              <option *ngFor="let d of discoSets" [ngValue]="d.id">{{ d.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Set 2 piezas</label>
+            <select [(ngModel)]="newAgent.discoRecomendado2pc" name="disco2">
+              <option [ngValue]="null">-- Ninguno --</option>
+              <option *ngFor="let d of discoSets" [ngValue]="d.id">{{ d.nombre }}</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
+      <!-- SECCIÓN 4: HABILIDADES -->
+      <div class="form-section-admin glass-panel">
+        <h3 class="section-title">Habilidades</h3>
+        <div class="skill-category-edit" *ngFor="let category of skillOrder">
+          <div class="category-header">
+            <h4>{{ formatSkillLabel(category) | uppercase }}</h4>
+            <button type="button" class="btn-add-skill" (click)="addSubSkill(category)">+ Añadir</button>
+          </div>
+          <div class="skill-sub-item" *ngFor="let skill of newAgent.habilidades[category]; let i = index">
+            <div class="skill-inputs">
+              <input type="text" [(ngModel)]="skill.nombre" [name]="category + '_name_' + i" placeholder="Nombre sub-habilidad">
+              <textarea [(ngModel)]="skill.descripcion" [name]="category + '_desc_' + i" placeholder="Descripción..."></textarea>
+            </div>
+            <button type="button" class="btn-remove-skill" (click)="removeSubSkill(category, i)" *ngIf="newAgent.habilidades[category].length > 1">🗑️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 5: MINDSCAPES -->
+      <div class="form-section-admin glass-panel">
+        <h3 class="section-title">Cine Mental (Mindscapes)</h3>
+        <div class="mindscapes-form-grid">
+          <div class="form-group" *ngFor="let m of objectKeys(newAgent.mindscapes)">
+            <label>Nivel {{ m }}</label>
+            <textarea [(ngModel)]="newAgent.mindscapes[m]" [name]="'mindscape_' + m" rows="2" placeholder="Efecto del mindscape..."></textarea>
+          </div>
+        </div>
+      </div>
 
       <button type="submit" class="btn-submit" [disabled]="!adminForm.form.valid || isUploading || isSaving">
-        <span *ngIf="!isUploading && !isSaving">Guardar Agente</span>
+        <span *ngIf="!isUploading && !isSaving">{{ newAgent.id ? 'Actualizar Agente' : 'Crear Agente' }}</span>
         <span *ngIf="isUploading">Subiendo imagen...</span>
         <span *ngIf="isSaving">Guardando en BD...</span>
       </button>

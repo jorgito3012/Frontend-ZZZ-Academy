@@ -22,6 +22,11 @@ export class AdminService {
     return this.http.post<any>(`${this.ADMIN_URL}/agentes`, agentData);
   }
 
+  // ACTUALIZAR AGENTE
+  updateAgent(id: number, agentData: any): Observable<any> {
+    return this.http.put<any>(`${this.ADMIN_URL}/agentes/${id}`, agentData);
+  }
+
   // CREAR W-ENGINE
   createWEngine(wengineData: any): Observable<any> {
     return this.http.post<any>(`${this.ADMIN_URL}/wengines`, wengineData);

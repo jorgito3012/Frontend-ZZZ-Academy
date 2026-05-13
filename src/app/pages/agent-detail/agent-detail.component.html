@@ -1,0 +1,123 @@
+<div class="agent-detail-container" *ngIf="!isLoading && agent">
+  
+  <div class="header-section glass-panel">
+    <div class="back-btn-container">
+      <a routerLink="/catalog" class="back-btn">← Volver a Agentes</a>
+    </div>
+    
+    <div class="header-content">
+      <div class="agent-portrait-wrapper">
+        <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-portrait" onerror="this.src='https://placehold.co/400x500/1a1c23/c3ff00?text=No+Image'">
+      </div>
+      
+      <div class="agent-info-primary">
+        <h1 class="agent-name">{{ agent.nombre }}</h1>
+        <div class="agent-badges">
+          <span class="badge rango" [ngClass]="agent.rango">{{ agent.rango }}</span>
+          <span class="badge elemento">{{ agent.elemento }}</span>
+          <span class="badge rol">{{ agent.rol }}</span>
+        </div>
+        <div class="agent-desc">
+          <p>{{ agent.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Columna Izquierda: Perfil, Estadísticas y Build -->
+    <div class="left-column">
+      <div class="stats-build-section glass-panel">
+        <h2 style="margin-top: 0;">Estadísticas Base (Lvl 60)</h2>
+        <div class="stats-grid" *ngIf="agent.estadisticasLvl60">
+          <div class="stat-item" *ngFor="let statKey of objectKeys(agent.estadisticasLvl60)">
+            <span class="stat-label">{{ statKey }}</span>
+            <span class="stat-value">{{ agent.estadisticasLvl60[statKey] }}</span>
+          </div>
+        </div>
+        <div *ngIf="!agent.estadisticasLvl60">
+          <p>Estadísticas no disponibles.</p>
+        </div>
+
+        <!-- Build Recomendada -->
+        <ng-container *ngIf="agent.wengineRecomendado || agent.discoRecomendado4pc || agent.discoRecomendado2pc">
+          <h2 style="margin-top: 40px;">Build Recomendada</h2>
+          <div class="build-grid">
+            
+            <!-- W-Engine -->
+            <div class="build-card" *ngIf="agent.wengineRecomendado">
+              <div class="build-img-wrapper">
+                <img [src]="apiService.getImageUrl(agent.wengineRecomendado.imagenUrl)" [alt]="agent.wengineRecomendado.nombre">
+              </div>
+              <div class="build-info">
+                <h4>W-Engine</h4>
+                <h3>{{ agent.wengineRecomendado.nombre }}</h3>
+              </div>
+            </div>
+
+            <!-- Set 4 piezas -->
+            <div class="build-card" *ngIf="agent.discoRecomendado4pc">
+              <div class="build-img-wrapper">
+                <img [src]="apiService.getImageUrl(agent.discoRecomendado4pc.imagenUrl)" [alt]="agent.discoRecomendado4pc.nombre">
+              </div>
+              <div class="build-info">
+                <h4>Pistas de Datos (4 Piezas)</h4>
+                <h3>{{ agent.discoRecomendado4pc.nombre }}</h3>
+              </div>
+            </div>
+
+            <!-- Set 2 piezas -->
+            <div class="build-card" *ngIf="agent.discoRecomendado2pc">
+              <div class="build-img-wrapper">
+                <img [src]="apiService.getImageUrl(agent.discoRecomendado2pc.imagenUrl)" [alt]="agent.discoRecomendado2pc.nombre">
+              </div>
+              <div class="build-info">
+                <h4>Pistas de Datos (2 Piezas)</h4>
+                <h3>{{ agent.discoRecomendado2pc.nombre }}</h3>
+              </div>
+            </div>
+
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Habilidades -->
+    <div class="right-column">
+      <div class="skills-section glass-panel">
+        <h3>Habilidades</h3>
+        <div class="skills-grid">
+          <div *ngFor="let category of skillOrder" class="skill-category">
+            <h4 class="text-accent">{{ formatSkillLabel(category) }}</h4>
+            <div class="skill-list" *ngIf="agent.habilidades[category]">
+              <div *ngFor="let skill of agent.habilidades[category]" class="skill-item">
+                <p class="skill-name">{{ skill.nombre }}</p>
+                <p class="skill-desc">{{ skill.descripcion }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mindscapes: Abajo del todo (Fuera del grid) -->
+  <div class="mindscapes-section glass-panel" *ngIf="agent.mindscapes && objectKeys(agent.mindscapes).length > 0" style="margin-top: 30px; margin-bottom: 0;">
+    <h2>Cine Mental (Mindscapes)</h2>
+    <div class="mindscapes-grid">
+      <div class="mindscape-card" *ngFor="let mKey of getSortedKeys(agent.mindscapes)">
+        <h4 class="mindscape-title">{{ mKey }}</h4>
+        <p class="mindscape-desc">{{ agent.mindscapes[mKey] }}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="isLoading" class="loading-state text-center mt-4">
+  <h3 class="text-accent">CARGANDO DATOS DEL AGENTE...</h3>
+</div>
+<div *ngIf="!isLoading && !agent" class="error-state text-center mt-4">
+  <h3 class="text-accent">AGENTE NO ENCONTRADO</h3>
+  <a routerLink="/catalog" class="back-btn mt-3 d-inline-block">Volver a Agentes</a>
+</div>
