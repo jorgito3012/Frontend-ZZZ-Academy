@@ -10,6 +10,7 @@
     <button [class.active]="activeTab === 'wengines'" (click)="switchTab('wengines')">⚙️ Crear W-Engine</button>
     <button [class.active]="activeTab === 'bangboos'" (click)="switchTab('bangboos')">🤖 Crear Bangboo</button>
     <button [class.active]="activeTab === 'discos'" (click)="switchTab('discos')">💿 Crear Disco</button>
+    <button [class.active]="activeTab === 'usuarios'" (click)="switchTab('usuarios')">👥 Usuarios</button>
   </div>
 
   <div class="admin-card">
@@ -313,12 +314,59 @@
 
       <ng-container *ngTemplateOutlet="imageUploadTemplate"></ng-container>
 
-      <button type="submit" class="btn-submit" [disabled]="!bangbooForm.form.valid || isUploading || isSaving">
-        <span *ngIf="!isUploading && !isSaving">Guardar Bangboo</span>
-        <span *ngIf="isUploading">Subiendo imagen...</span>
-        <span *ngIf="isSaving">Guardando en BD...</span>
-      </button>
     </form>
+
+    <!-- GESTIÓN DE USUARIOS -->
+    <div class="users-management-section" *ngIf="activeTab === 'usuarios'">
+      <div class="section-header">
+        <h2>Gestión de Cuentas de Usuario</h2>
+        <p>Administra los roles y permisos de los miembros de la academia</p>
+      </div>
+
+      <div class="users-table-container glass-panel">
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Email</th>
+              <th>Rol Actual</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users" [class.current-user-row]="user.id === currentUserId">
+              <td>{{ user.id }}</td>
+              <td>
+                {{ user.email }}
+                <span class="you-badge" *ngIf="user.id === currentUserId">Tú</span>
+              </td>
+              <td>
+                <span class="role-badge" [class.admin]="user.rol === 'ADMIN'">{{ user.rol }}</span>
+              </td>
+              <td class="actions-cell">
+                <button (click)="toggleAdmin(user)" class="btn-action-admin"
+                  [disabled]="user.id === currentUserId"
+                  [title]="user.id === currentUserId ? 'No puedes modificar tu propio rol' : (user.rol === 'ADMIN' ? 'Quitar Admin' : 'Hacer Admin')">
+                  {{ user.rol === 'ADMIN' ? '👤 Quitar Admin' : '🛡️ Hacer Admin' }}
+                </button>
+                <button (click)="deleteUserAccount(user.id)" class="btn-action-delete"
+                  [disabled]="user.id === currentUserId"
+                  [title]="user.id === currentUserId ? 'No puedes eliminar tu propia cuenta' : 'Borrar Cuenta'">
+                  🗑️ Borrar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot *ngIf="users.length === 0">
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 40px; color: rgba(255,255,255,0.4);">
+                No hay otros usuarios registrados en el sistema.
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
 
   </div>
 </div>

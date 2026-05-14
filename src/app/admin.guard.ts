@@ -10,7 +10,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
     return true; // Acceso permitido solo a Dioses (Admins)
   } else {
     // Si es un simple mortal, de vuelta al catálogo
-    router.navigate(['/catalog']);
+    router.navigate(['/agentes']);
     return false;
   }
 };

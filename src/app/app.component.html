@@ -1,31 +1,45 @@
 <main class="app-container">
-  <!-- Cabecera Global Minimalista -->
+  <!-- Cabecera Global con Menú Hamburguesa -->
   <header class="app-header glass-panel">
-    <div class="logo">
-      <span class="text-accent">ZZZ</span> ACADEMY
-    </div>
-    <nav class="main-nav">
-      <a routerLink="/catalog" routerLinkActive="active" class="nav-link">Agentes</a>
-      <a routerLink="/tier-list" routerLinkActive="active" class="nav-link">Tier List</a>
-      <a routerLink="/wengines" routerLinkActive="active" class="nav-link">W-Engines</a>
-      <a routerLink="/bangboos" routerLinkActive="active" class="nav-link">Bangboos</a>
-      <a routerLink="/discos" routerLinkActive="active" class="nav-link">Discos</a>
-      
-      <!-- Si NO está logueado -->
-      <ng-container *ngIf="!authService.isLoggedIn()">
-        <a routerLink="/login" class="nav-link text-accent">Entrar</a>
-      </ng-container>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="text-accent">ZZZ</span> ACADEMY
+      </div>
 
-      <!-- Si SÍ está logueado -->
-      <ng-container *ngIf="authService.isLoggedIn()">
-        <a routerLink="/roster" class="nav-link">Mi Roster</a>
-        <a *ngIf="authService.isAdmin()" routerLink="/admin" class="nav-link text-accent">🛡️ Panel Admin</a>
-        <a (click)="logout()" class="nav-link text-danger">Salir</a>
-      </ng-container>
-    </nav>
+      <!-- Botón Hamburguesa (solo móvil) -->
+      <button class="burger-btn" (click)="toggleMenu()" [class.open]="menuOpen" aria-label="Menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Nav (se colapsa en móvil) -->
+      <nav class="main-nav" [class.open]="menuOpen">
+        <a routerLink="/agentes" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Agentes</a>
+        <a routerLink="/tier-list" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Tier List</a>
+        <a routerLink="/wengines" routerLinkActive="active" class="nav-link" (click)="closeMenu()">W-Engines</a>
+        <a routerLink="/bangboos" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Bangboos</a>
+        <a routerLink="/discos" routerLinkActive="active" class="nav-link" (click)="closeMenu()">Discos</a>
+
+        <!-- Si NO está logueado -->
+        <ng-container *ngIf="!authService.isLoggedIn()">
+          <a routerLink="/login" class="nav-link text-accent" (click)="closeMenu()">Entrar</a>
+        </ng-container>
+
+        <!-- Si SÍ está logueado -->
+        <ng-container *ngIf="authService.isLoggedIn()">
+          <a routerLink="/roster" class="nav-link" (click)="closeMenu()">Mi Roster</a>
+          <a *ngIf="authService.isAdmin()" routerLink="/admin" class="nav-link text-accent" (click)="closeMenu()">🛡️ Admin</a>
+          <a (click)="logout()" class="nav-link text-danger">Salir</a>
+        </ng-container>
+      </nav>
+    </div>
   </header>
 
-  <!-- Contenedor Principal donde se cargarán las rutas (Login, Home, Roster...) -->
+  <!-- Overlay oscuro cuando el menú móvil está abierto -->
+  <div class="menu-overlay" *ngIf="menuOpen" (click)="closeMenu()"></div>
+
+  <!-- Contenedor Principal donde se cargarán las rutas -->
   <section class="router-container">
     <router-outlet></router-outlet>
   </section>

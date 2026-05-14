@@ -11,46 +11,42 @@ import { ApiService } from '../../services/api.service';
   styleUrls: ['./tier-list.component.css']
 })
 export class TierListComponent implements OnInit {
-  public apiService = inject(ApiService);
+  private apiService = inject(ApiService);
   
   agents: any[] = [];
-  
-  // Categorías
-  atacantes: any[] = [];
-  anomalos: any[] = [];
-  utilidad: any[] = [];
-
   isLoading = true;
-
-  // Los niveles de tier que queremos mostrar
-  tiers = ['SS', 'S', 'A', 'B'];
 
   ngOnInit(): void {
     this.apiService.getAgents().subscribe({
-      next: (data) => {
+      next: (data: any[]) => {
         this.agents = data;
-        this.distributeAgents();
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Error cargando agentes:', err);
+      error: (err: any) => {
+        console.error('Error loading agents for tier list', err);
         this.isLoading = false;
       }
     });
   }
 
-  distributeAgents(): void {
-    // Grupo 1: Atacantes y Disruptivos
-    this.atacantes = this.agents.filter(a => a.rol === 'ATACANTE' || a.rol === 'DISRUPTIVO');
-    
-    // Grupo 2: Anómalos
-    this.anomalos = this.agents.filter(a => a.rol === 'ANOMALO');
-    
-    // Grupo 3: Utilidad (Aturdidores, Apoyos y Defensores)
-    this.utilidad = this.agents.filter(a => a.rol === 'ATURDIDOR' || a.rol === 'APOYO' || a.rol === 'DEFENSIVO');
+  getAgentsByTier(tier: string, roleGroup: string): any[] {
+    return this.agents.filter(a => {
+      const matchesTier = a.tier === tier;
+      let matchesRole = false;
+
+      if (roleGroup === 'DPS') {
+        matchesRole = a.rol === 'ATACANTE' || a.rol === 'DISRUPTIVO';
+      } else if (roleGroup === 'ANOMALO') {
+        matchesRole = a.rol === 'ANOMALO';
+      } else if (roleGroup === 'SUPPORT') {
+        matchesRole = a.rol === 'ATURDIDOR' || a.rol === 'APOYO' || a.rol === 'DEFENSIVO';
+      }
+
+      return matchesTier && matchesRole;
+    });
   }
 
-  getAgentsByTier(list: any[], tier: string): any[] {
-    return list.filter(a => a.tier === tier);
+  getImageUrl(path: string): string {
+    return this.apiService.getImageUrl(path);
   }
 }

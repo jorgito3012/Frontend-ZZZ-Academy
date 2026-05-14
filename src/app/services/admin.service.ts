@@ -41,4 +41,17 @@ export class AdminService {
   createBangboo(bangbooData: any): Observable<any> {
     return this.http.post<any>(`${this.ADMIN_URL}/bangboos`, bangbooData);
   }
+
+  // GESTIÓN DE USUARIOS
+  getUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ADMIN_URL}/usuarios`);
+  }
+
+  updateUserRole(userId: number, role: string): Observable<any> {
+    return this.http.put<any>(`${this.ADMIN_URL}/usuarios/${userId}/rol`, { rol: role });
+  }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.ADMIN_URL}/usuarios/${userId}`);
+  }
 }

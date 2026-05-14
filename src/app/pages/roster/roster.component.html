@@ -1,0 +1,195 @@
+<div class="roster-container animate-fade-in">
+  <div class="roster-header">
+    <div class="header-info">
+      <h1>Mi <span class="text-accent">Roster</span></h1>
+      <p>Gestiona tu colección de agentes y sus equipamientos personalizados</p>
+    </div>
+    <button class="btn-add-main" (click)="showAddModal = true">
+      <span class="plus-icon">+</span> Añadir Agente
+    </button>
+  </div>
+
+  <!-- Roster Grid -->
+  <div class="roster-grid" *ngIf="!isLoading && myAgents.length > 0">
+    <div class="agent-card glass-panel" *ngFor="let item of myAgents">
+      <div class="card-top">
+        <div class="agent-avatar">
+          <img [src]="getImageUrl(item.agente.imagenUrl)" [alt]="item.agente.nombre">
+          <div class="agent-level">Nvl {{item.nivel}}</div>
+        </div>
+        <div class="agent-info-basic">
+          <h3>{{item.agente.nombre}}</h3>
+          <div class="tags">
+            <span class="tag-element" [attr.data-element]="item.agente.elemento">{{item.agente.elemento}}</span>
+            <span class="tag-role">{{item.agente.rol}}</span>
+          </div>
+        </div>
+        <button class="btn-delete" (click)="removeAgent(item.id)">🗑️</button>
+      </div>
+
+      <div class="card-stats">
+        <div class="stat-control">
+          <label>Nivel</label>
+          <input type="number" [(ngModel)]="item.nivel" (change)="updateAgentData(item)" min="1" max="60">
+        </div>
+        <div class="stat-control">
+          <label>Cine Mental</label>
+          <select [(ngModel)]="item.mindscapesDesbloqueados" (change)="updateAgentData(item)">
+            <option *ngFor="let n of [0,1,2,3,4,5,6]" [value]="n">M{{n}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="build-summary">
+        <h4>Build Actual</h4>
+        <button class="btn-edit-build" (click)="openBuildEditor(item)">
+          ⚙️ Gestionar Equipamiento
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-roster" *ngIf="!isLoading && myAgents.length === 0">
+    <div class="empty-icon">👤</div>
+    <h2>Tu Roster está vacío</h2>
+    <p>Empieza a añadir los agentes que has conseguido para gestionar sus builds.</p>
+    <button class="btn-add-main" (click)="showAddModal = true">Añadir mi primer Agente</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- MODAL: AÑADIR AGENTE -->
+  <div class="modal-overlay" *ngIf="showAddModal">
+    <div class="modal-content glass-panel animate-zoom">
+      <div class="modal-header">
+        <h2>Añadir Agente al Roster</h2>
+        <button class="close-btn" (click)="showAddModal = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>Selecciona un personaje:</label>
+        <div class="agent-selection-grid">
+          <div class="agent-select-card" 
+               *ngFor="let agent of getAvailableAgents()" 
+               [class.selected]="newRosterAgentId === agent.id"
+               (click)="newRosterAgentId = agent.id">
+            <img [src]="getImageUrl(agent.imagenUrl)" [alt]="agent.nombre">
+            <span>{{agent.nombre}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="showAddModal = false">Cancelar</button>
+        <button class="btn-confirm" (click)="addAgent()" [disabled]="!newRosterAgentId">Confirmar Adición</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITOR DE BUILD -->
+  <div class="modal-overlay" *ngIf="selectedAgentForBuild">
+    <div class="modal-content build-modal glass-panel animate-zoom">
+      <div class="modal-header">
+        <div class="header-title-group">
+          <h2>Equipamiento de Agente</h2>
+          <span class="agent-name">{{selectedAgentForBuild.agente.nombre}}</span>
+        </div>
+        <button class="close-btn" (click)="selectedAgentForBuild = null">&times;</button>
+      </div>
+      
+      <div class="modal-body" *ngIf="!activePicker">
+        <!-- W-ENGINE -->
+        <div class="build-section">
+          <h3 class="section-title">W-Engine Equipado</h3>
+          <div class="wengine-display-row" (click)="activePicker = 'wengine'">
+            <div class="equipped-item-box" [class.empty]="!buildForm.wEngineId">
+              <img *ngIf="buildForm.wEngineId" [src]="getImageUrl(getWEngineById(buildForm.wEngineId).imagenUrl)">
+              <div class="item-details" *ngIf="buildForm.wEngineId">
+                <span class="item-name">{{getWEngineById(buildForm.wEngineId).nombre}}</span>
+                <span class="item-rarity" [attr.data-rarity]="getWEngineById(buildForm.wEngineId).rareza">Grado {{getWEngineById(buildForm.wEngineId).rareza}}</span>
+              </div>
+              <div class="placeholder-text" *ngIf="!buildForm.wEngineId">Haz clic para equipar un W-Engine</div>
+            </div>
+            <div class="lvl-input-group" *ngIf="buildForm.wEngineId" (click)="$event.stopPropagation()">
+              <label>Nivel</label>
+              <input type="number" [(ngModel)]="buildForm.wEngineNivel" min="1" max="60">
+            </div>
+          </div>
+        </div>
+
+        <!-- DISCOS -->
+        <div class="build-section">
+          <h3 class="section-title">Discos de Datos (Slots 1-6)</h3>
+          <div class="discs-grid-editor">
+            <div class="disc-editor-card glass-panel" *ngFor="let slot of [1,2,3,4,5,6]">
+              <div class="disc-slot-header">Posición {{slot}}</div>
+              
+              <!-- Selector de Set -->
+              <div class="set-picker-trigger" (click)="activePicker = 'disc'; activeDiscSlot = slot">
+                <div class="set-icon-box" [class.empty]="!buildForm.discos[slot].setId">
+                  <img *ngIf="buildForm.discos[slot].setId" [src]="getImageUrl(getSetById(buildForm.discos[slot].setId).imagenUrl)">
+                  <span *ngIf="!buildForm.discos[slot].setId">+</span>
+                </div>
+                <div class="set-name-small" *ngIf="buildForm.discos[slot].setId">
+                  {{getSetById(buildForm.discos[slot].setId).nombre}}
+                </div>
+                <div class="set-placeholder-small" *ngIf="!buildForm.discos[slot].setId">Equipar Set</div>
+              </div>
+
+              <!-- Selector de Main Stat -->
+              <div class="main-stat-selector">
+                <label>Stat Principal</label>
+                <select [(ngModel)]="buildForm.discos[slot].mainStat">
+                  <option *ngFor="let stat of slotStats[slot]" [value]="stat">{{stat}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PICKER: W-ENGINE -->
+      <div class="modal-body picker-body" *ngIf="activePicker === 'wengine'">
+        <div class="picker-header">
+          <button class="back-btn" (click)="activePicker = null">← Volver</button>
+          <h3>Seleccionar W-Engine</h3>
+        </div>
+        <div class="items-picker-grid">
+          <div class="picker-item-card glass-panel" *ngFor="let w of allWEngines" (click)="selectWEngine(w)">
+            <div class="item-img-container">
+              <img [src]="getImageUrl(w.imagenUrl)">
+            </div>
+            <div class="item-info">
+              <span class="name">{{w.nombre}}</span>
+              <span class="rarity" [attr.data-rarity]="w.rareza">Grado {{w.rareza}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PICKER: DISC SET -->
+      <div class="modal-body picker-body" *ngIf="activePicker === 'disc'">
+        <div class="picker-header">
+          <button class="back-btn" (click)="activePicker = null; activeDiscSlot = null">← Volver</button>
+          <h3>Seleccionar Set de Discos (Slot {{activeDiscSlot}})</h3>
+        </div>
+        <div class="items-picker-grid">
+          <div class="picker-item-card glass-panel" *ngFor="let set of allDiscoSets" (click)="selectDiscSet(set)">
+            <div class="item-img-container">
+              <img [src]="getImageUrl(set.imagenUrl)">
+            </div>
+            <div class="item-info">
+              <span class="name">{{set.nombre}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" *ngIf="!activePicker">
+        <button class="btn-confirm" (click)="saveBuild()">Guardar Build Completa</button>
+      </div>
+    </div>
+  </div>
+</div>

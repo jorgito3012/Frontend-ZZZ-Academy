@@ -1,27 +1,30 @@
-<div class="tier-list-container">
-  <div class="header-section animate-fade-in">
+<div class="tier-list-container animate-fade-in">
+  <div class="header-section">
     <h1 class="page-title">Tier List de Agentes</h1>
     <p class="subtitle">Clasificación de personajes por rol y rendimiento en combate</p>
+  </div>
+
+  <div class="loading-spinner" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Cargando datos de la academia...</p>
   </div>
 
   <div class="tier-columns-grid" *ngIf="!isLoading">
     
     <!-- COLUMNA 1: ATACANTES / DISRUPTIVOS -->
-    <div class="tier-column glass-panel">
+    <div class="tier-column">
       <div class="column-header">
-        <i class="icon-sword"></i>
+        <span>Roles</span>
         <h2>Daño Principal</h2>
-        <span>Atacantes y Disruptivos</span>
       </div>
-      
       <div class="tier-rows">
-        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
-          <div class="tier-label">{{t}}</div>
+        <div class="tier-row tier-ss" *ngFor="let tier of ['SS', 'S', 'A', 'B']" [ngClass]="'tier-' + tier.toLowerCase()">
+          <div class="tier-label">{{tier}}</div>
           <div class="tier-content">
-            <div class="agent-square" *ngFor="let agent of getAgentsByTier(atacantes, t)" [routerLink]="['/agent', agent.id]">
-              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
-              <div class="agent-name-overlay">{{agent.nombre}}</div>
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(tier, 'DPS')" [routerLink]="['/agent', agent.id]">
+              <img [src]="getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
               <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
             </div>
           </div>
         </div>
@@ -29,54 +32,44 @@
     </div>
 
     <!-- COLUMNA 2: ANÓMALOS -->
-    <div class="tier-column glass-panel">
+    <div class="tier-column">
       <div class="column-header">
-        <i class="icon-anomaly"></i>
+        <span>Roles</span>
         <h2>Anomalía</h2>
-        <span>Especialistas en Atributos</span>
       </div>
-
       <div class="tier-rows">
-        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
-          <div class="tier-label">{{t}}</div>
+        <div class="tier-row" *ngFor="let tier of ['SS', 'S', 'A', 'B']" [ngClass]="'tier-' + tier.toLowerCase()">
+          <div class="tier-label">{{tier}}</div>
           <div class="tier-content">
-            <div class="agent-square" *ngFor="let agent of getAgentsByTier(anomalos, t)" [routerLink]="['/agent', agent.id]">
-              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
-              <div class="agent-name-overlay">{{agent.nombre}}</div>
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(tier, 'ANOMALO')" [routerLink]="['/agent', agent.id]">
+              <img [src]="getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
               <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- COLUMNA 3: UTILIDAD -->
-    <div class="tier-column glass-panel">
+    <!-- COLUMNA 3: APOYO / STUN / DEFENSE -->
+    <div class="tier-column">
       <div class="column-header">
-        <i class="icon-shield"></i>
+        <span>Roles</span>
         <h2>Utilidad</h2>
-        <span>Aturdidores, Apoyo y Defensa</span>
       </div>
-
       <div class="tier-rows">
-        <div class="tier-row" *ngFor="let t of tiers" [ngClass]="'tier-' + t.toLowerCase()">
-          <div class="tier-label">{{t}}</div>
+        <div class="tier-row" *ngFor="let tier of ['SS', 'S', 'A', 'B']" [ngClass]="'tier-' + tier.toLowerCase()">
+          <div class="tier-label">{{tier}}</div>
           <div class="tier-content">
-            <div class="agent-square" *ngFor="let agent of getAgentsByTier(utilidad, t)" [routerLink]="['/agent', agent.id]">
-              <img [src]="apiService.getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
-              <div class="agent-name-overlay">{{agent.nombre}}</div>
+            <div class="agent-square" *ngFor="let agent of getAgentsByTier(tier, 'SUPPORT')" [routerLink]="['/agent', agent.id]">
+              <img [src]="getImageUrl(agent.imagenUrl)" [alt]="agent.nombre" class="agent-img">
               <div class="element-icon" [attr.data-element]="agent.elemento"></div>
+              <div class="agent-name-overlay">{{agent.nombre}}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading-spinner" *ngIf="isLoading">
-    <div class="spinner"></div>
-    <p>Analizando datos de combate...</p>
   </div>
 </div>

@@ -12,6 +12,7 @@ export class AuthService {
   private readonly AUTH_URL = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'zzz_token';
   private readonly ROLE_KEY = 'zzz_role';
+  private readonly USER_ID_KEY = 'zzz_user_id';
 
   // LOGIN
   login(credentials: any): Observable<JwtResponse> {
@@ -19,6 +20,7 @@ export class AuthService {
       tap(response => {
         this.saveToken(response.token);
         this.saveRole(response.rol);
+        if (response.id) localStorage.setItem(this.USER_ID_KEY, String(response.id));
       })
     );
   }
@@ -54,9 +56,15 @@ export class AuthService {
     return this.getRole() === 'ADMIN' || this.getRole() === 'ROLE_ADMIN';
   }
 
+  getCurrentUserId(): number | null {
+    const id = localStorage.getItem(this.USER_ID_KEY);
+    return id ? Number(id) : null;
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
+    localStorage.removeItem(this.USER_ID_KEY);
   }
 
   isLoggedIn(): boolean {

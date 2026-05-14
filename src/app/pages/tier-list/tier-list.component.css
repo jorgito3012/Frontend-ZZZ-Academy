@@ -170,23 +170,29 @@
   box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
-.element-icon[data-element="FUEGO"] { background: #ff4e4e; box-shadow: 0 0 8px #ff4e4e; }
-.element-icon[data-element="HIELO"] { background: #4ca3ff; box-shadow: 0 0 8px #4ca3ff; }
-.element-icon[data-element="ELECTRICO"] { background: #ffdb15; box-shadow: 0 0 8px #ffdb15; }
-.element-icon[data-element="FISICO"] { background: #f0f0f0; box-shadow: 0 0 8px #fff; }
-.element-icon[data-element="ETER"] { background: #a44cff; box-shadow: 0 0 8px #a44cff; }
+.element-icon[data-element="FUEGO"] { background: #ff4444; box-shadow: 0 0 8px #ff4444; }
+.element-icon[data-element="HIELO"] { background: #b3e5fc; box-shadow: 0 0 8px #b3e5fc; }
+.element-icon[data-element="GELIDO"] { background: #0288d1; box-shadow: 0 0 8px #0288d1; }
+.element-icon[data-element="ETER"] { background: #9c27b0; box-shadow: 0 0 8px #9c27b0; }
+.element-icon[data-element="TINTA_AURICA"] { background: #ffc107; box-shadow: 0 0 8px #ffc107; }
+.element-icon[data-element="FISICO"] { background: #ffeb3b; box-shadow: 0 0 8px #ffeb3b; }
+.element-icon[data-element="ELECTRICO"] { background: #1a237e; box-shadow: 0 0 8px #1a237e; }
+.element-icon[data-element="HOJA_AFILADA"] { background: #ffffff; box-shadow: 0 0 8px #ffffff; }
 
 /* Responsive */
 @media (max-width: 1200px) {
-  .tier-columns-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  .tier-column {
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
-  }
+  .tier-columns-grid { grid-template-columns: 1fr; gap: 40px; }
+  .tier-column { max-width: 800px; margin: 0 auto; width: 100%; }
+}
+
+@media (max-width: 768px) {
+  .tier-list-container { padding: 20px 12px; }
+  .page-title { font-size: 2rem; letter-spacing: 1px; }
+  .header-section { margin-bottom: 24px; }
+  .tier-row { min-height: 80px; }
+  .tier-label { width: 50px; font-size: 1.5rem; }
+  .agent-square { width: 64px; height: 64px; }
+  .tier-rows { padding: 10px; gap: 8px; }
 }
 
 /* Animations */

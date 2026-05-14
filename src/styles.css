@@ -201,3 +201,63 @@ select option {
 .align-items-center { align-items: center; }
 .justify-content-center { justify-content: center; }
 .justify-content-between { justify-content: space-between; }
+
+/* ==========================================================================
+   RESPONSIVE GLOBAL — Mobile First
+   ========================================================================== */
+
+/* Contenedores de página con padding seguro */
+.page-container,
+.roster-container,
+.catalog-container,
+.tier-list-container,
+.admin-container,
+.wengines-container,
+.discos-container,
+.bangboos-container {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+/* Grids adaptativos */
+@media (max-width: 768px) {
+  /* Tipografía más pequeña en móvil */
+  h1 { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+  h2 { font-size: clamp(1.4rem, 5vw, 2rem); }
+  h3 { font-size: clamp(1.2rem, 4vw, 1.5rem); }
+
+  /* Grids de 2 columnas → 1 en móvil */
+  .grid-2col { grid-template-columns: 1fr !important; }
+
+  /* Filas de formulario apiladas */
+  .form-row {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  /* Cards con menos padding */
+  .glass-panel {
+    border-radius: var(--radius-md);
+  }
+
+  /* Ocultar elementos no esenciales en móvil */
+  .hide-mobile { display: none !important; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.6rem; }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   VIEWPORT SAFE AREAS (para notch de iPhone, etc.)
+   ========================================================================== */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

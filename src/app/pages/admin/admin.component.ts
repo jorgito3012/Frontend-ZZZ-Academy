@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
 import { ApiService } from '../../services/api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -14,6 +15,9 @@ import { ApiService } from '../../services/api.service';
 export class AdminComponent {
   private adminService = inject(AdminService);
   private apiService = inject(ApiService);
+  private authService = inject(AuthService);
+
+  currentUserId: number | null = null;
   
   // Listas para selectores
   agents: any[] = [];
@@ -21,7 +25,7 @@ export class AdminComponent {
   discoSets: any[] = [];
   
   selectedAgentId: number | string = '';
-  activeTab: 'agentes' | 'wengines' | 'discos' | 'bangboos' = 'agentes';
+  activeTab: 'agentes' | 'wengines' | 'discos' | 'bangboos' | 'usuarios' = 'agentes';
 
   skillOrder = ['ataque_basico', 'evasion', 'asistencia', 'tecnica_especial', 'tecnica_cadena', 'habilidad_core'];
 
@@ -79,7 +83,11 @@ export class AdminComponent {
   successMessage = '';
   errorMessage = '';
 
+  // Gestión de Usuarios
+  users: any[] = [];
+
   ngOnInit() {
+    this.currentUserId = this.authService.getCurrentUserId();
     this.loadInitialData();
   }
 
@@ -185,9 +193,50 @@ export class AdminComponent {
   }
 
   // Cambiar de Pestaña
-  switchTab(tab: 'agentes' | 'wengines' | 'discos' | 'bangboos') {
+  switchTab(tab: 'agentes' | 'wengines' | 'discos' | 'bangboos' | 'usuarios') {
     this.activeTab = tab;
     this.resetState();
+    if (tab === 'usuarios') {
+      this.loadUsers();
+    }
+  }
+
+  loadUsers() {
+    this.adminService.getUsers().subscribe({
+      next: (data) => this.users = data,
+      error: (err) => this.errorMessage = 'No se pudieron cargar los usuarios.'
+    });
+  }
+
+  toggleAdmin(user: any) {
+    if (user.id === this.currentUserId) {
+      this.errorMessage = 'No puedes cambiar tu propio rol de administrador.';
+      return;
+    }
+    const newRole = user.rol === 'ADMIN' ? 'USER' : 'ADMIN';
+    this.adminService.updateUserRole(user.id, newRole).subscribe({
+      next: (updatedUser) => {
+        user.rol = updatedUser.rol;
+        this.successMessage = `Rol de ${user.email} actualizado a ${newRole}`;
+      },
+      error: (err) => this.errorMessage = 'Error al cambiar el rol.'
+    });
+  }
+
+  deleteUserAccount(userId: number) {
+    if (userId === this.currentUserId) {
+      this.errorMessage = 'No puedes eliminar tu propia cuenta de administrador.';
+      return;
+    }
+    if (confirm('¿Estás seguro de que quieres borrar esta cuenta? Esta acción no se puede deshacer.')) {
+      this.adminService.deleteUser(userId).subscribe({
+        next: () => {
+          this.users = this.users.filter(u => u.id !== userId);
+          this.successMessage = 'Usuario eliminado correctamente.';
+        },
+        error: (err) => this.errorMessage = 'Error al eliminar el usuario.'
+      });
+    }
   }
 
   // Previsualizar Imagen
