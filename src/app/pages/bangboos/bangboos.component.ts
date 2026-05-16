@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
+import { environment } from '../../../environments/environment';
+
 
 @Component({
   selector: 'app-bangboos',
@@ -14,6 +16,7 @@ export class BangboosComponent implements OnInit {
   
   bangboos: any[] = [];
   filteredBangboos: any[] = [];
+  apiUrl = environment.apiUrl.replace('/api', ''); // <--- AÑADE ESTA LÍNEA AQUÍ
 
   // Filtros activos
   selectedRango: string = 'TODOS';

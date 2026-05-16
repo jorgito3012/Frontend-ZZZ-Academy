@@ -19,11 +19,11 @@
   <!-- GRILLA DE BANGBOOS -->
   <div class="grid-container">
     <div class="card" *ngFor="let bangboo of filteredBangboos">
-      
+
       <!-- Imagen Superior -->
       <div class="card-image-wrapper">
-        <img [src]="'http://localhost:8080' + bangboo.imagenUrl" [alt]="bangboo.nombre" class="card-image"
-             onerror="this.src='/assets/placeholder.webp'">
+        <img [src]="apiUrl + bangboo.imagenUrl" [alt]="bangboo.nombre" class="card-image"
+          onerror="this.onerror=null; this.src='/assets/placeholder.webp';">
         <span class="badge badge-rank" [ngClass]="'rank-' + bangboo.rango">
           Rango {{ bangboo.rango }}
         </span>
@@ -35,7 +35,7 @@
 
         <!-- Sistema Visual de Habilidades JSONB -->
         <div class="skills-container" *ngIf="bangboo.habilidades">
-          
+
           <div class="skill-block">
             <h4 class="skill-type text-accent">Técnica Activa</h4>
             <span class="skill-name">{{ bangboo.habilidades.activa?.nombre }}</span>
@@ -57,7 +57,7 @@
             <span class="skill-name">{{ bangboo.habilidades.cadena?.nombre }}</span>
             <p class="skill-desc">{{ bangboo.habilidades.cadena?.descripcion }}</p>
           </div>
-          
+
         </div>
       </div>
     </div>
